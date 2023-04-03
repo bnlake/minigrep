@@ -15,7 +15,7 @@
 					"kind": "bin"
 				}
 			},
-			"args": ["test", "testfile.txt"],
+			"args": ["Rust", "testfile.txt"],
 			"cwd": "${workspaceFolder}"
 		},
 		{
