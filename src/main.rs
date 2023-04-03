@@ -1,4 +1,4 @@
-use std::{env, fs, process };
+use std::{env, fs, process};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -11,9 +11,7 @@ fn main() {
     println!("Searching for {}", config.query);
     println!("In file {}", config.file_path);
 
-    let content = fs::read_to_string(config.file_path).expect("Should have been able to find file");
-
-    println!("With text:\n{}", content);
+    run(config);
 }
 
 struct Config {
@@ -30,4 +28,10 @@ impl Config {
         let file_path = args[2].clone();
         Ok(Config { query, file_path })
     }
+}
+
+fn run(config: Config) {
+    let content = fs::read_to_string(config.file_path).expect("Should have been able to find file");
+
+    println!("With text:\n{}", content);
 }
