@@ -2,32 +2,26 @@ Learning Rust as a software developer manager,
 Can be quite a daunting task to undertake.
 But the benefits it brings can be quite grander,
 And it's worth the effort that you'll have to make.
-
 For Rust is a language that is quite unique,
 Designed for speed, safety, and concurrency.
 It's perfect for building applications that speak,
 To a world that demands precision and efficiency.
-
 The syntax of Rust may seem a bit obscure,
 And the borrowing rules can be quite strict.
 But if you stick with it, you'll soon be sure,
 That Rust is a language that is truly terrific.
-
 For Rust's speed is unmatched in many ways,
 And its safety features make it stand out.
 Concurrency is handled with elegant grace,
 And it's perfect for systems that have a lot of clout.
-
 As a software developer manager, Rust can be,
 A tool that you can use to great effect.
 You can build systems that are secure and free,
 From the bugs and the flaws that often infect.
-
 So don't be afraid to take the leap,
 And learn Rust with all your heart and soul.
 It may be challenging, but the rewards are deep,
 And it's a language that's sure to make you whole.
-
 In the end, learning Rust as a software developer manager,
 Will give you a new perspective on coding.
 You'll see the world with a clearer and sharper vigor,
