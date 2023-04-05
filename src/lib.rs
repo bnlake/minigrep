@@ -12,23 +12,25 @@ impl Config {
         if args.len() < 3 {
             return Err("not enough arguments");
         }
-        
+
         let query = args[1].clone();
         let file_path = args[2].clone();
         let ignore_case = env::var("IGNORE_CASE").is_ok();
 
-        Ok(Config { query, file_path, ignore_case })
+        Ok(Config {
+            query,
+            file_path,
+            ignore_case,
+        })
     }
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.file_path)?;
 
-    let results = if config.ignore_case {
-        search_case_insensitive(&config.query, &contents)
-    } else {
-        search(&config.query, &contents)
-    };
+    let strategy = search_strategy_factory(config.ignore_case)
+        .expect("Should have returned a search strategy");
+    let results = strategy.search(&config.query, &contents);
 
     for line in results {
         println!("{}", line);
@@ -37,29 +39,59 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results: Vec<&str> = Vec::new();
-
-    for line in contents.lines() {
-        if line.contains(query) {
-            results.push(line);
-        }
-    }
-
-    results
+pub trait SearchStrategy {
+    fn search<'a>(&self, query: &str, contents: &'a str) -> Vec<&'a str>;
 }
 
-pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let query = query.to_lowercase();
-    let mut results = Vec::new();
+pub struct CaseInsensitiveSearch;
 
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&query) {
-            results.push(line);
-        }
+impl CaseInsensitiveSearch {
+    pub fn new() -> Self {
+        CaseInsensitiveSearch
     }
+}
 
-    results
+impl SearchStrategy for CaseInsensitiveSearch {
+    fn search<'a>(&self, query: &str, contents: &'a str) -> Vec<&'a str> {
+        let query = query.to_lowercase();
+        let mut results = Vec::new();
+
+        for line in contents.lines() {
+            if line.to_lowercase().contains(&query) {
+                results.push(line);
+            }
+        }
+
+        results
+    }
+}
+pub struct CaseSensitiveSearch;
+
+impl CaseSensitiveSearch {
+    pub fn new() -> Self {
+        CaseSensitiveSearch
+    }
+}
+
+impl SearchStrategy for CaseSensitiveSearch {
+    fn search<'a>(&self, query: &str, contents: &'a str) -> Vec<&'a str> {
+        let mut results: Vec<&str> = Vec::new();
+
+        for line in contents.lines() {
+            if line.contains(query) {
+                results.push(line);
+            }
+        }
+
+        results
+    }
+}
+
+pub fn search_strategy_factory(ignore_case: bool) -> Option<Box<dyn SearchStrategy>> {
+    match ignore_case {
+        false => Some(Box::new(CaseSensitiveSearch)),
+        true => Some(Box::new(CaseInsensitiveSearch)),
+    }
 }
 
 #[cfg(test)]
@@ -78,7 +110,7 @@ Trust me"
         let query = "Rust";
         let contents = get_contents();
 
-        let result = search(query, contents);
+        let result = CaseSensitiveSearch::new().search(query, contents);
 
         assert_eq!(vec!["Rust:"], result);
     }
@@ -88,7 +120,7 @@ Trust me"
         let query = "RuSt";
         let contents = get_contents();
 
-        let result = search_case_insensitive(query, contents);
+        let result = CaseInsensitiveSearch::new().search(query, contents);
 
         assert_eq!(vec!["Rust:", "Trust me"], result);
     }
