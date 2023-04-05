@@ -43,13 +43,8 @@ pub trait SearchStrategy {
     fn search<'a>(&self, query: &str, contents: &'a str) -> Vec<&'a str>;
 }
 
+#[derive(Default)]
 pub struct CaseInsensitiveSearch;
-
-impl CaseInsensitiveSearch {
-    pub fn new() -> Self {
-        CaseInsensitiveSearch
-    }
-}
 
 impl SearchStrategy for CaseInsensitiveSearch {
     fn search<'a>(&self, query: &str, contents: &'a str) -> Vec<&'a str> {
@@ -65,13 +60,9 @@ impl SearchStrategy for CaseInsensitiveSearch {
         results
     }
 }
-pub struct CaseSensitiveSearch;
 
-impl CaseSensitiveSearch {
-    pub fn new() -> Self {
-        CaseSensitiveSearch
-    }
-}
+#[derive(Default)]
+pub struct CaseSensitiveSearch;
 
 impl SearchStrategy for CaseSensitiveSearch {
     fn search<'a>(&self, query: &str, contents: &'a str) -> Vec<&'a str> {
@@ -110,7 +101,7 @@ Trust me"
         let query = "Rust";
         let contents = get_contents();
 
-        let result = CaseSensitiveSearch::new().search(query, contents);
+        let result = CaseSensitiveSearch.search(query, contents);
 
         assert_eq!(vec!["Rust:"], result);
     }
@@ -120,7 +111,7 @@ Trust me"
         let query = "RuSt";
         let contents = get_contents();
 
-        let result = CaseInsensitiveSearch::new().search(query, contents);
+        let result = CaseInsensitiveSearch.search(query, contents);
 
         assert_eq!(vec!["Rust:", "Trust me"], result);
     }
